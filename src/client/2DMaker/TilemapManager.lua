@@ -23,6 +23,7 @@ local player = game.Players.LocalPlayer
 
 --> Variables <--
 local Identifier = 0
+local nmbTileLoaded = 0
 
 --> Functions <--
 
@@ -53,17 +54,24 @@ function TilemapManager:ImportTilemap(TilemapID, MapSize, TilemapSizeL, TilemapS
     local TotalTileW = TilemapSizeW / MapSize
 
     print("Loading Tileset...")
-    for w=0, TotalTileW do
-        for l=0, TotalTileL do
+    for w=0, (TotalTileW-1) do
+        for l=0, (TotalTileL-1) do
             local NewTile = NewTileBlock:Clone()
             NewTile.Parent = game.Workspace
             NewTile.Name = "Tile_"..Identifier
-            NewTile.SurfaceGui.FullTilemap.ImageRectSize = Vector2.new(8,8)
-            NewTile.SurfaceGui.FullTilemap.ImageRectOffset = Vector2.new(8*l, 8*w)
+            NewTile.SurfaceGui.FullTilemap.ImageRectSize = Vector2.new(MapSize,MapSize)
+            NewTile.SurfaceGui.FullTilemap.ImageRectOffset = Vector2.new(MapSize*l, MapSize*w)
             NewTile.Position = Vector3.new(TotalTileL - l,TotalTileW - w, 0)
             --NewTile.SelectionBox.Adornee = NewTile
+            NewTile:SetAttribute("IsBaseTile", true)
             NewTile.Parent = game.ReplicatedStorage:FindFirstChild("LoadedTilemaps")
-            Identifier = Identifier + 1
+            --NewTile.Parent = game.Workspace
+            Identifier += 1
+            nmbTileLoaded += 1
+            if nmbTileLoaded >= 200 then
+                task.wait(0.1)
+                nmbTileLoaded = 0
+            end
         end
     end
 

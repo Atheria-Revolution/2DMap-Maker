@@ -21,12 +21,11 @@ local UIController = { }
 
 local player = game.Players.LocalPlayer
 local UI = player.PlayerGui:FindFirstChild("ClientUI")
-local PromptOC = UI:FindFirstChild("SingleInputFrame")
-local PromptTC = UI:FindFirstChild("DoubleInputFrame")
+local PromptOC = UI.MF:FindFirstChild("SingleInputFrame")
+local PromptTC = UI.MF:FindFirstChild("DoubleInputFrame")
 
 --> Variables <--
 
-local IsPromptShown = false
 local ChoosenPrompt = nil
 
 --> Functions <--
@@ -79,18 +78,22 @@ end
 
 function UIController:CreateNewPrompt(PromptNM, PromptText, Input1T, Input2T)
     local FinalInput1, FinalInput2
-    if IsPromptShown == false then
-        IsPromptShown = true
-        if Input2T then ChoosenPrompt = PromptTC else ChoosenPrompt = PromptOC end
-        ChoosenPrompt.InputName.Text = PromptNM
-        ChoosenPrompt.InputDescription.Text = PromptText
-        if Input2T then
-            ChoosenPrompt.Input1Box.PlaceholderText = Input1T
-            ChoosenPrompt.Input2Box.PlaceholderText = Input2T
-        else
-            ChoosenPrompt.InputBox.PlaceholderText = Input1T
-        end
+    if Input2T then ChoosenPrompt = PromptTC else ChoosenPrompt = PromptOC end
+    ChoosenPrompt.InputName.Text = PromptNM
+    ChoosenPrompt.InputDescription.Text = PromptText
+    if Input2T then
+        ChoosenPrompt.Input1Box.PlaceholderText = Input1T
+        ChoosenPrompt.Input1Box.Text = ""
+        ChoosenPrompt.Input2Box.PlaceholderText = Input2T
+        ChoosenPrompt.Input2Box.Text = ""
+    else
+        ChoosenPrompt.InputBox.PlaceholderText = Input1T
+        ChoosenPrompt.InputBox.Text = ""
     end
+
+    ChoosenPrompt.EnterButton.Text = "Enter"
+
+    UI.MF.Visible = true
 
     AnimatePrompt(ChoosenPrompt, true)
     local Activated = false
@@ -116,6 +119,7 @@ function UIController:CreateNewPrompt(PromptNM, PromptText, Input1T, Input2T)
     repeat task.wait() until Activated == true
 
     AnimatePrompt(ChoosenPrompt, false)
+    UI.MF.Visible = false
     return FinalInput1, FinalInput2
 end
 

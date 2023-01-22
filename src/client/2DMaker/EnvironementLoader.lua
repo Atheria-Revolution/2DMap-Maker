@@ -22,6 +22,7 @@ local EnvironementLoader = { }
 --> Variables <--
 
 local GlobalIdentifier = 0
+local nmbGridLoaded = 0
 
 --> Functions <--
 
@@ -42,19 +43,28 @@ function EnvironementLoader:LoadEmpthy(SizeL, SizeW)
     NewSB.Color3 = Color3.fromRGB(255,255,255)
     NewSB.LineThickness = 0.0005
     
-    local TotalTileL = SizeL
-    local TotalTileW = SizeW
+    local TotalTileL = tonumber(SizeL)
+    local TotalTileW = tonumber(SizeW)
+
+    if TotalTileL > 100 then TotalTileL = 100 end
+    if TotalTileW > 100 then TotalTileW = 100 end
 
     print("Loading Environment...")
-    for w=0, TotalTileW do
-        for l=0, TotalTileL do
+    for w=0, TotalTileW-1 do
+        for l=0, TotalTileL-1 do
             local NewTile = NewTileBlock:Clone()
             NewTile.Parent = game.Workspace
             NewTile.Name = "TileSpot_"..GlobalIdentifier
             NewTile.Position = Vector3.new(TotalTileL - l,TotalTileW - w, 0)
             NewTile.SelectionBox.Adornee = NewTile
+            NewTile:SetAttribute("IsTileSpot", true)
             NewTile.Parent = game.Workspace:FindFirstChild("LoadedEnvironment")
             GlobalIdentifier = GlobalIdentifier + 1
+            nmbGridLoaded += 1
+            if nmbGridLoaded >= 200 then
+                task.wait(0.1)
+                nmbGridLoaded = 0
+            end
         end
     end
 
